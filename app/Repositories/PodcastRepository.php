@@ -4,7 +4,7 @@ namespace App\Repositories;
 
 use App\Podcast;
 
-class PodcastRepository implements EpisodeInterface
+class PodcastRepository implements PodcastInterface
 {
     // model property on class instances
     protected $podcast;
@@ -16,9 +16,9 @@ class PodcastRepository implements EpisodeInterface
     }
     
     // Get all instances of model
-    public function all()
+    public function allPodcasts()
     {
-        return $this->podcast->all();
+        return $this->podcast->allPodcasts();
     }
     
     // create a new record in the database

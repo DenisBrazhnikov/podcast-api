@@ -4,7 +4,7 @@ namespace App\Repositories;
 
 interface PodcastInterface
 {
-    public function all();
+    public function allPodcasts();
     
     public function create(array $data);
     
