@@ -44,4 +44,16 @@ class Podcast extends Model
          */
         return response()->json(['Podcasts' => $podcastNames]);
     }
+    
+    // Find whether podcast exists
+    public function doesPodcastExist($podcast)
+    {
+        /**
+         * Gets directories within given podcast folder.
+         * @var array $podcasts
+         */
+        $podcasts = Storage::disk('spaces')->directories('podcasts/podcast-1');
+        
+        return !empty($podcasts) ? TRUE : FALSE;
+    }
 }

@@ -3,7 +3,6 @@
 namespace App\Http\Controllers;
 
 use App\Repositories\PodcastRepository;
-use Illuminate\Http\Request;
 use App\Podcast;
 
 class PodcastController extends Controller

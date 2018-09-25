@@ -15,5 +15,5 @@ use Illuminate\Http\Request;
 
 Route::get('/podcasts', 'PodcastController@index')->name('podcast');
 
-Route::get('/postcasts/{slug}', 'EpisodeController@index')->name('episode');
+Route::get('/podcasts/{slug}', 'EpisodeController@index')->name('episode');
 Route::post('/podcasts/{slug}/episodes/new', 'EpisodeController@create')->name('episodeCreate');
