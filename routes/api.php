@@ -13,6 +13,7 @@ use Illuminate\Http\Request;
 |
 */
 
-Route::middleware('auth:api')->get('/user', function (Request $request) {
-    return $request->user();
-});
+Route::get('/podcasts', 'PodcastController@index')->name('podcast');
+Route::get('/postcasts/{slug}', 'PodcastController@show')->name('podcastShow');
+
+Route::post('/podcasts/{slug}/episodes/new', 'EpisodeController@create')->name('episodeCreate');
