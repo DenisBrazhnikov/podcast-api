@@ -6,5 +6,7 @@ interface PodcastInterface
 {
     public function allPodcasts();
     
-    public function doesPodcastExist($podcast);
+    public function doesPodcastExistDb($slug);
+    
+    public function doesPodcastExistDisk($downloadPath);
 }

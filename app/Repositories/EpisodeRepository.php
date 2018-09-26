@@ -20,4 +20,6 @@ class EpisodeRepository implements EpisodeInterface
     {
         return $this->episode->allEpisodes($podcast);
     }
+    
+    
 }

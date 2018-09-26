@@ -16,7 +16,6 @@ class CreateEpisodesTable extends Migration
         Schema::create('episodes', function (Blueprint $table) {
             $table->increments('id');
             $table->integer('podcasts_id')->references('id')->on('podcasts');
-            $table->string('slug')->unique();
             $table->string('title');
             $table->string('download_path')->unique();
             $table->string('description');

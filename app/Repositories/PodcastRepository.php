@@ -21,9 +21,15 @@ class PodcastRepository implements PodcastInterface
         return $this->podcast->allPodcasts();
     }
     
-    // Find whether podcast exists
-    public function doesPodcastExist($podcast)
+    // Find whether podcast exists disk
+    public function doesPodcastExistDisk($slug)
     {
-        return $this->podcast->doesPodcastExist($podcast);
+        return $this->podcast->doesPodcastExistDisk($slug);
+    }
+    
+    // Find whether podcast exists database
+    public function doesPodcastExistDb($downloadPath)
+    {
+        return $this->podcast->doesPodcastExistDb($downloadPath);
     }
 }

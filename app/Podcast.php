@@ -4,55 +4,54 @@ namespace App;
 
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\Storage;
+use Carbon\Carbon;
+use App\Episode;
 
 class Podcast extends Model
 {
+    protected $guarded = [];
+    
     // Get all podcasts
     public function allPodcasts()
     {
-        /**
-         * Gets directories within podcasts folder
-         * @var array $podcasts
-         */
-        $podcasts = Storage::disk('spaces')->directories('podcasts');
-        /**
-         * If podcasts directory is empty return empty json response;
-         */
-        if(empty($podcasts)) return response()->json();
-        /**
-         * Initialize array @var to store podcast names
-         * @var array $podcastNames
-         */
-        $podcastNames = array();
-        /**
-         * Iterate over directories within podcasts folder
-         */
-        foreach($podcasts as $p)
-        {
-            /**
-             * Extract the podcast name from the folder path
-             * @var string $podcast
-             */
-            $podcast = explode('/', $p)[1];
-            /**
-             * Append the podcast name to the $podcastNames array
-             */
-            array_push($podcastNames, $podcast);
+        $podcasts = $this->all();
+        
+        $podcastsCollection = array();
+        
+        foreach($podcasts as $podcast)
+        { 
+            array_push($podcastsCollection, [
+                'Id'           => $podcast['id'],
+                'Slug'         => $podcast['slug'],
+                'Name'         => $podcast['name'],
+                'DownloadPath' => $podcast['download_path'],
+                'CreatedAt'    => Carbon::parse($podcast['created_at'])->format('Y-m-d H:i:s'),
+                'UpdatedAt'    => Carbon::parse($podcast['updated_at'])->format('Y-m-d H:i:s'),
+            ]);
         }
+        
         /**
          * Return json array with list of podcast names
          */
-        return response()->json(['Podcasts' => $podcastNames]);
+        return json_encode($podcastsCollection);
     }
     
-    // Find whether podcast exists
-    public function doesPodcastExist($podcast)
+    // Find whether podcast exists on database
+    public function doesPodcastExistDb($slug)
+    {
+        $podcast = $this->where('slug', $slug)->first();
+        
+        return $podcast !== NULL ? TRUE : FALSE;
+    }
+    
+    // Find whether podcast exists on disk
+    public function doesPodcastExistDisk($downloadPath)
     {
         /**
          * Gets directories within given podcast folder.
          * @var array $podcasts
          */
-        $podcasts = Storage::disk('spaces')->directories('podcasts/'.$podcast);
+        $podcasts = Storage::disk('spaces')->directories($downloadPath);
         
         return !empty($podcasts) ? TRUE : FALSE;
     }
