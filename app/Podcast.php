@@ -52,7 +52,7 @@ class Podcast extends Model
          * Gets directories within given podcast folder.
          * @var array $podcasts
          */
-        $podcasts = Storage::disk('spaces')->directories('podcasts/podcast-1');
+        $podcasts = Storage::disk('spaces')->directories('podcasts/'.$podcast);
         
         return !empty($podcasts) ? TRUE : FALSE;
     }
