@@ -17,8 +17,8 @@
  |--------------------------------------------------------------------------
  */
 Route::get('/podcasts', 'PodcastController@index')->name('podcast');
+Route::post('/podcasts/new', 'PodcastController@create')->name('podcastCreate');
 Route::get('/podcasts/{podcastSlug}', 'PodcastController@show')->name('podcastShow');
-Route::patch('/podcasts/{podcastSlug}/update', 'PodcastController@update')->name('podcastUpdate');
 Route::delete('/podcasts/{podcastSlug}/delete', 'PodcastController@update')->name('podcastDelete');
 
 /*

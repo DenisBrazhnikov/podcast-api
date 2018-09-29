@@ -4,6 +4,8 @@ namespace App\Http\Controllers;
 
 use App\Repositories\PodcastRepository;
 use App\Repositories\EpisodeRepository;
+use Illuminate\Support\Facades\Storage;
+use Illuminate\Http\Request;
 use App\Podcast;
 use App\Episode;
 
@@ -62,5 +64,58 @@ class PodcastController extends Controller
         $podcast = array_merge($podcast, ['Episodes'=>$this->episode->getPodcastEpisodes($podcast['Id'])]);
         
         return response()->json($podcast);
+    }
+    
+    /**
+     * Create a podcast.
+     * 
+     * @param   string                    $podcastSlug
+     * @param   \Illuminate\Http\Request  $request
+     * @return  \Illuminate\Http\Reponse
+     */
+    public function create(Request $request)
+    {
+        /**
+         * Get errors for this request.
+         * 
+         * @var array $errors
+         */
+        $errors = Podcast::getPostErrors($request);
+        
+        if(!empty($errors))
+        {
+            /**
+             * Return JSON response list of errors to client.
+             */
+            return response()->json([
+                'Message' => 'Invalid input data.',
+                'Errors'  => $errors,
+            ], 400);
+        }
+        
+        /**
+         * Initialize vars to store sanitized fields.
+         */
+        $name = filter_var($request->input('name'), FILTER_SANITIZE_STRING);
+        
+        /**
+         * Remove unwanted characters from $name.
+         */
+        $name = str_replace(['/', '-', ','], '', $name);
+        
+        $slug          = str_slug($name);
+        $download_path = "podcasts/$slug";
+        
+        Storage::disk('spaces')->makeDirectory($download_path);
+        
+        Podcast::create([
+            'slug'          => $slug,
+            'name'          => $name,
+            'download_path' => $download_path,
+        ]);
+        
+        return response()->json([
+            'Message' => 'Successful',
+        ]);
     }
 }

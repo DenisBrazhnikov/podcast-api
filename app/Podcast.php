@@ -89,4 +89,31 @@ class Podcast extends Model
          */
         return $podcastsCollection;
     }
+    /**
+     * Get errors of post request for this resource.
+     * 
+     * @param   \Illuminate\Http\Request  $request
+     * @return  array
+     */
+    public static function getPostErrors($request)
+    {
+        $errors = array();
+        
+        $name = $request->input('name');
+        
+        if($name === NULL)
+        {
+            array_push($errors, 'Name not provided.');            
+        }
+        elseif(strlen($name) < 3)
+        {
+            array_push($errors, 'Name is less than 3 characters.');
+        }
+        elseif(strlen($name) > 191)
+        {
+            array_push($errors, 'Name exceeds 191 characters.');
+        }
+        
+        return $errors;
+    }
 }
