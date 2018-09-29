@@ -16,10 +16,13 @@ class EpisodeRepository implements EpisodeInterface
     }
     
     // Get all instances of model
-    public function allEpisodes($podcast)
+    public function allEpisodes($podcastId)
     {
-        return $this->episode->allEpisodes($podcast);
+        return $this->episode->allEpisodes($podcastId);
     }
     
-    
+    public function getPodcastEpisodes($podcastId)
+    {
+        return $this->episode->getPodcastEpisodes($podcastId);
+    }
 }

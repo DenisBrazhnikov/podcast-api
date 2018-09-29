@@ -35,7 +35,7 @@ class Podcast extends Model
         }
         
         /**
-         * Return json array with list of podcast names
+         * Return array with list of podcast names
          */
         return $podcastsCollection;
     }
@@ -69,5 +69,24 @@ class Podcast extends Model
         $podcasts = Storage::disk('spaces')->directories($downloadPath);
         
         return !empty($podcasts) ? TRUE : FALSE;
+    }
+    
+    public function getPodcast($slug)
+    {
+        $podcast = $this->where('slug', $slug)->first();
+        
+        $podcastsCollection = array(        
+            'Id'           => $podcast['id'],
+            'Slug'         => $podcast['slug'],
+            'Name'         => $podcast['name'],
+            'DownloadPath' => $podcast['download_path'],
+            'CreatedAt'    => Carbon::parse($podcast['created_at'])->format('Y-m-d H:i:s'),
+            'UpdatedAt'    => Carbon::parse($podcast['updated_at'])->format('Y-m-d H:i:s'),
+        );
+        
+        /**
+         * Return array with list of podcast names
+         */
+        return $podcastsCollection;
     }
 }

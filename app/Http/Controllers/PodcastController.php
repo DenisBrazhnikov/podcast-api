@@ -39,4 +39,28 @@ class PodcastController extends Controller
         
         return response()->json($podcasts);
     }
+    
+    /**
+     * Get a specific podcast and it's related data.
+     * 
+     * @param  string  $podcastSlug
+     * @return \Illuminate\Http\Response
+     */
+    public function show($podcastSlug)
+    {
+        $podcast = Podcast::where('slug', $podcastSlug)->first();
+        
+        if(!$this->podcast->doesPodcastExistDb($podcastSlug) || !$this->podcast->doesPodcastExistDisk($podcast['download_path']))
+        {
+            return response()->json([
+                'Message' => 'Podcast not found.'
+            ], 404);
+        }
+        
+        $podcast = $this->podcast->getPodcast($podcastSlug);
+        
+        $podcast = array_merge($podcast, ['Episodes'=>$this->episode->getPodcastEpisodes($podcast['Id'])]);
+        
+        return response()->json($podcast);
+    }
 }

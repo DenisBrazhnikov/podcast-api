@@ -9,4 +9,6 @@ interface PodcastInterface
     public function doesPodcastExistDb($slug);
     
     public function doesPodcastExistDisk($downloadPath);
+    
+    public function getPodcast($slug);
 }

@@ -102,4 +102,35 @@ class Episode extends Model
         
         return $errors;
     }
+    
+    /**
+     * Get episodes for a given podcast.
+     * 
+     * @param  integer $podcastId
+     * @return array
+     */
+    public function getPodcastEpisodes($podcastId)
+    {
+        $episodes = $this->where('podcasts_id', $podcastId)->get();
+        
+        $episodesCollection = array();
+        
+        foreach($episodes as $episode)
+        {
+            $file = Storage::disk('spaces')->files($episode['download_path']);
+            
+            array_push($episodesCollection, [
+                'Id'            => $episode['id'],
+                'PodcastsId'    => $episode['podcasts_id'],
+                'Title'         => $episode['title'],
+                'DownloadPath'  => $episode['download_path'],
+                'EpisodeNumber' => $episode['episode_number'],
+                'CreatedAt'     => Carbon::parse($episode['created_at'])->format('Y-m-d H:i:a'),
+                'UpdatedAt'     => Carbon::parse($episode['updated_at'])->format('Y-m-d H:i:a'),
+                'Episode'       => !empty($file) ? $file[0] : FALSE,
+            ]);
+        }
+        
+        return $episodesCollection;
+    }
 }
