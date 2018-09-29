@@ -61,14 +61,9 @@ class Podcast extends Model
      */
     public function doesPodcastExistDisk($downloadPath)
     {
-        /**
-         * Gets directories within given podcast folder.
-         * 
-         * @var array $podcasts
-         */
-        $podcasts = Storage::disk('spaces')->directories($downloadPath);
+        $podcastExists = Storage::disk('spaces')->exists($downloadPath);
         
-        return !empty($podcasts) ? TRUE : FALSE;
+        return $podcastExists === TRUE;
     }
     
     public function getPodcast($slug)

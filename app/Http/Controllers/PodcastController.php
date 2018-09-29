@@ -106,13 +106,45 @@ class PodcastController extends Controller
         $slug          = str_slug($name);
         $download_path = "podcasts/$slug";
         
-        Storage::disk('spaces')->makeDirectory($download_path);
+        Storage::disk('spaces')->makeDirectory("$download_path/episodes");
         
         Podcast::create([
             'slug'          => $slug,
             'name'          => $name,
             'download_path' => $download_path,
         ]);
+        
+        return response()->json([
+            'Message' => 'Successful',
+        ]);
+    }
+    
+    /**
+     * Delete a podcast.
+     * 
+     * @param   string                     $podcastSlug
+     * @param   \Illuminate\Http\Request   $request
+     * @return  \Illuminate\Http\Response
+     */
+    public function delete($podcastSlug, Request $request)
+    {
+        $podcast = Podcast::where('slug', $podcastSlug)->first();
+        
+        if(!$this->podcast->doesPodcastExistDb($podcastSlug) || !$this->podcast->doesPodcastExistDisk($podcast['download_path']))
+        {
+            return response()->json([
+                'Message' => 'Podcast not found.'
+            ], 404);
+        }
+        /**
+         * Delete directory from spaces.
+         */
+        Storage::disk('spaces')->deleteDirectory($podcast['download_path']);
+        /**
+         * Delete database data.
+         */
+        Episode::where('podcasts_id', $podcast->id)->delete();
+        $podcast->delete();
         
         return response()->json([
             'Message' => 'Successful',
