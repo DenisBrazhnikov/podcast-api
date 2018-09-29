@@ -1,7 +1,5 @@
 <?php
 
-use Illuminate\Http\Request;
-
 /*
 |--------------------------------------------------------------------------
 | API Routes
@@ -13,7 +11,23 @@ use Illuminate\Http\Request;
 |
 */
 
+/*
+ |--------------------------------------------------------------------------
+ | Podcast Routes
+ |--------------------------------------------------------------------------
+ */
 Route::get('/podcasts', 'PodcastController@index')->name('podcast');
+Route::get('/podcasts/{podcastSlug}', 'PodcastController@show')->name('podcastShow');
+Route::patch('/podcasts/{podcastSlug}/update', 'PodcastController@update')->name('podcastUpdate');
+Route::delete('/podcasts/{podcastSlug}/delete', 'PodcastController@update')->name('podcastDelete');
 
-Route::get('/podcasts/{slug}', 'EpisodeController@index')->name('episode');
-Route::post('/podcasts/{slug}/episodes/new', 'EpisodeController@create')->name('episodeCreate');
+/*
+ |--------------------------------------------------------------------------
+ | Episode Routes
+ |--------------------------------------------------------------------------
+ */
+Route::get('/podcasts/{podcastSlug}/episodes', 'EpisodeController@index')->name('episode');
+Route::post('/podcasts/{podcastSlug}/episodes/new', 'EpisodeController@create')->name('episodeCreate');
+Route::get('/podcasts/{podcastSlug}/episodes/{episodeSlug}', 'EpisodeController@show')->name('episodeShow');
+Route::delete('/podcasts/{podcastSlug}/episodes/{episodeSlug}/delete', 'EpisodeController@delete')->name('episodeDelete');
+

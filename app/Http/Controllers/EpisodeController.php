@@ -15,8 +15,8 @@ class EpisodeController extends Controller
     /**
      * Object constructor.
      * 
-     * @param Podcast $podcast
-     * @param Episode $episode
+     * @param  Podcast  $podcast
+     * @param  Episode  $episode
      */
     public function __construct(Podcast $podcast, Episode $episode)
     {
@@ -26,14 +26,14 @@ class EpisodeController extends Controller
     /**
      * List all podcast episodes.
      * 
-     * @param string $slug
-     * @return \Illuminate\Http\Response
+     * @param   string  $podcastSlug
+     * @return  \Illuminate\Http\Response
      */
-    public function index($slug)
+    public function index($podcastSlug)
     {
-        $podcast = Podcast::where('slug', $slug)->first();
+        $podcast = Podcast::where('slug', $podcastSlug)->first();
         
-        if(!$this->podcast->doesPodcastExistDb($slug) || !$this->podcast->doesPodcastExistDisk($podcast['download_path']))
+        if(!$this->podcast->doesPodcastExistDb($podcastSlug) || !$this->podcast->doesPodcastExistDisk($podcast['download_path']))
         {
             return response()->json([
                 'Message' => 'Podcast not found.'                
@@ -47,15 +47,15 @@ class EpisodeController extends Controller
     /**
      * Create podcast episode.
      * 
-     * @param string $slug
-     * @param Request $request
-     * @return \Illuminate\Http\Response
+     * @param   string   $podcastSlug
+     * @param   Request  $request
+     * @return  \Illuminate\Http\Response
      */
-    public function create($slug, Request $request)
+    public function create($podcastSlug, Request $request)
     {
-        $podcast = Podcast::where('slug', $slug)->first();
+        $podcast = Podcast::where('slug', $podcastSlug)->first();
         
-        if(!$this->podcast->doesPodcastExistDb($slug) || !$this->podcast->doesPodcastExistDisk($podcast['download_path']))
+        if(!$this->podcast->doesPodcastExistDb($podcastSlug) || !$this->podcast->doesPodcastExistDisk($podcast['download_path']))
         {
             return response()->json([
                 'Message' => 'Podcast not found.'
