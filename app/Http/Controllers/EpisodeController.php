@@ -14,6 +14,7 @@ class EpisodeController extends Controller
     protected $episode = null;
     /**
      * Object constructor.
+     * 
      * @param Podcast $podcast
      * @param Episode $episode
      */
@@ -24,6 +25,7 @@ class EpisodeController extends Controller
     }
     /**
      * List all podcast episodes.
+     * 
      * @param string $slug
      * @return \Illuminate\Http\Response
      */
@@ -38,12 +40,13 @@ class EpisodeController extends Controller
             ], 404);
         }        
         
-        $episodes = json_decode($this->episode->allEpisodes($podcast->id));
+        $episodes = $this->episode->allEpisodes($podcast->id);
         
         return response()->json($episodes);
     }
     /**
      * Create podcast episode.
+     * 
      * @param string $slug
      * @param Request $request
      * @return \Illuminate\Http\Response
@@ -60,11 +63,13 @@ class EpisodeController extends Controller
         }
         /**
          * Store file object if uploaded.
+         * 
          * @var \Illuminate\Http\Request $episode
          */
         $episode = $request->file('episode');
         /**
          * Initialize var to hold errors for this request.
+         * 
          * @var array $errors
          */
         $errors = Episode::getPostErrors($request);
@@ -81,6 +86,7 @@ class EpisodeController extends Controller
         }
         /**
          * Store file name.
+         * 
          * @var string $podcastName
          */
         $podcastName = $episode->getClientOriginalName();
@@ -93,17 +99,20 @@ class EpisodeController extends Controller
          */
         $podcastName = str_replace(['/', '-', ','], '', $podcastName);
         /**
-         * Get episode count
+         * Get episode count.
+         * 
          * @var integer $episodeCount
          */
         $episodeCount = Episode::getEpisodeCount($podcast->id);
         /**
          * Initialize upload path variable.
+         * 
          * @var string $path
          */
         $path = "podcasts/$slug/episodes/".++$episodeCount;
         /**
          * Initialize disk variable.
+         * 
          * @var string $disk
          */
         $disk = "spaces";

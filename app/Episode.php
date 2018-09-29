@@ -11,8 +11,9 @@ class Episode extends Model
     protected $guarded = [];
     /**
      * List all podcast episodes.
+     * 
      * @param integer $podcastId
-     * @return JSON
+     * @return array
      */
     public function allEpisodes($podcastId)
     {
@@ -36,12 +37,11 @@ class Episode extends Model
             ]);            
         }
         
-        return json_encode([
-            'Episodes' => $episodesCollection
-        ]);
+        return $episodesCollection;
     }
     /**
-     * Get number of episodes for a given podcast
+     * Get number of episodes for a given podcast.
+     * 
      * @param integer $productId
      * @return integer
      */
@@ -53,6 +53,7 @@ class Episode extends Model
     }
     /**
      * Get errors of post request for this resource.
+     * 
      * @param \Illuminate\Http\Request $request
      * @return array
      */
@@ -61,6 +62,8 @@ class Episode extends Model
         $errors = array();
         
         $episode = $request->file('episode');
+        $title   = $request->input('title');
+        $desc    = $request->input('description');
         
         if($episode === NULL)
         {
@@ -71,14 +74,30 @@ class Episode extends Model
             array_push($errors, 'Invalid episode file type given.');
         }
         
-        if($request->input('title') === NULL)
+        if($title === NULL)
         {
             array_push($errors, 'Title not provided');
         }
+        elseif(strlen($title) < 5)
+        {
+            array_push($errors, 'TItle is less than 5 characters.');
+        }
+        elseif(strlen($title) > 191)
+        {
+            array_push($errors, 'Title is greater than 5 characters.');
+        }
         
-        if($request->input('description') === NULL)
+        if($desc === NULL)
         {
             array_push($errors, 'Description not provided.');
+        }
+        elseif(strlen($desc) < 5)
+        {
+            array_push($errors, 'Description is less than 10 characters.');
+        }
+        elseif(strlen($desc) > 191)
+        {
+            array_push($errors, 'Description is greater than 5 characters.');
         }
         
         return $errors;

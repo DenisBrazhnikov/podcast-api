@@ -13,6 +13,7 @@ class PodcastController extends Controller
     protected $episode = null;
     /**
      * Object constructor.
+     * 
      * @param Podcast $podcast
      */
     public function __construct(Podcast $podcast, Episode $episode)
@@ -22,16 +23,17 @@ class PodcastController extends Controller
     }
     /**
      * List all podcasts.
+     * 
      * @return \Illuminate\Http\Response
      */
     public function index()
     {
-        $podcasts = json_decode($this->podcast->allPodcasts(), TRUE);
+        $podcasts = $this->podcast->allPodcasts();
         
         for($i=0; $i < sizeof($podcasts); $i++)
         {
             $podcasts[$i] = array_merge($podcasts[$i], [
-                'Episodes' => json_decode($this->episode->allEpisodes($podcasts[$i]['Id']), TRUE),
+                'Episodes' => $this->episode->allEpisodes($podcasts[$i]['Id']),
             ]);
         }
         

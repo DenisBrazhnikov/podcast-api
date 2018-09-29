@@ -11,7 +11,11 @@ class Podcast extends Model
 {
     protected $guarded = [];
     
-    // Get all podcasts
+    /**
+     * Get all podcasts.
+     * 
+     * @return array
+     */
     public function allPodcasts()
     {
         $podcasts = $this->all();
@@ -33,10 +37,15 @@ class Podcast extends Model
         /**
          * Return json array with list of podcast names
          */
-        return json_encode($podcastsCollection);
+        return $podcastsCollection;
     }
     
-    // Find whether podcast exists on database
+    /**
+     * Find whether podcast exists on database.
+     * 
+     * @param string $slug
+     * @return boolean
+     */
     public function doesPodcastExistDb($slug)
     {
         $podcast = $this->where('slug', $slug)->first();
@@ -44,11 +53,17 @@ class Podcast extends Model
         return $podcast !== NULL ? TRUE : FALSE;
     }
     
-    // Find whether podcast exists on disk
+    /**
+     * Find whether podcast exists on disk
+     * 
+     * @param string $downloadPath
+     * @return boolean
+     */
     public function doesPodcastExistDisk($downloadPath)
     {
         /**
          * Gets directories within given podcast folder.
+         * 
          * @var array $podcasts
          */
         $podcasts = Storage::disk('spaces')->directories($downloadPath);
