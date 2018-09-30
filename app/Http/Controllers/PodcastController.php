@@ -76,11 +76,19 @@ class PodcastController extends Controller
     public function create(Request $request)
     {
         /**
+         * Initialize var to hold request data.
+         * @var array $data
+         */
+        $data = array
+        (
+            'name' => filter_var($request->input('name'), FILTER_SANITIZE_STRING),
+        );
+        /**
          * Get errors for this request.
          * 
          * @var array $errors
          */
-        $errors = Podcast::getPostErrors($request);
+        $errors = Podcast::getPostErrors($data);
         
         if(!empty($errors))
         {
@@ -94,23 +102,18 @@ class PodcastController extends Controller
         }
         
         /**
-         * Initialize vars to store sanitized fields.
-         */
-        $name = filter_var($request->input('name'), FILTER_SANITIZE_STRING);
-        
-        /**
          * Remove unwanted characters from $name.
          */
-        $name = str_replace(['/', '-', ','], '', $name);
+        $data['name'] = str_replace(['/', '-', ','], '', $data['name']);
         
-        $slug          = str_slug($name);
+        $slug          = str_slug($data['name']);
         $download_path = "podcasts/$slug";
         
         Storage::disk('spaces')->makeDirectory("$download_path/episodes");
         
         Podcast::create([
             'slug'          => $slug,
-            'name'          => $name,
+            'name'          => $data['name'],
             'download_path' => $download_path,
         ]);
         

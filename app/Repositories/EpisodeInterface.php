@@ -7,4 +7,6 @@ interface EpisodeInterface
     public function allEpisodes($podcastId);
     
     public function getPodcastEpisodes($podcastId);
+    
+    public function updateEpisode($data);
 }

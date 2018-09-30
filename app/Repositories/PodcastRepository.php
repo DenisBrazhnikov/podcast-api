@@ -32,4 +32,10 @@ class PodcastRepository implements PodcastInterface
     {
         return $this->podcast->doesPodcastExistDb($downloadPath);
     }
+    
+    // Get a podcast episode
+    public function getPodcast($podcastSlug)
+    {
+        return $this->podcast->getPodcast($podcastSlug);
+    }
 }

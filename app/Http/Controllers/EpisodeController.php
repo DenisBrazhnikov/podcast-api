@@ -65,15 +65,21 @@ class EpisodeController extends Controller
         /**
          * Store file object if uploaded.
          * 
-         * @var \Illuminate\Http\Request $episode
+         * @var array $episode
          */
-        $episodeFile = $request->file('episode');
+        $data = array
+        (
+            'episode'     => $request->file('episode'),
+            'title'       => filter_var($request->input('title'), FILTER_SANITIZE_STRING),
+            'description' => filter_var($request->input('description'), FILTER_SANITIZE_STRING),
+        );
+        
         /**
          * Initialize var to hold errors for this request.
          * 
          * @var array $errors
          */
-        $errors = Episode::getPostErrors($request);
+        $errors = Episode::getPostErrors($data);
         
         if(!empty($errors))
         {
@@ -90,7 +96,7 @@ class EpisodeController extends Controller
          * 
          * @var string $podcastName
          */
-        $podcastName = $episodeFile->getClientOriginalName();
+        $podcastName = $data['episode']->getClientOriginalName();
         /**
          * Remove extension from filename.
          */
@@ -127,8 +133,8 @@ class EpisodeController extends Controller
         Episode::create([
             'podcasts_id'    => $podcast->id,
             'download_path'  => $path,
-            'title'          => filter_var($request->input('title'), FILTER_SANITIZE_STRING),
-            'description'    => filter_var($request->input('description'), FILTER_SANITIZE_STRING),
+            'title'          => $data['title'],
+            'description'    => $data['description'],
             'episode_number' => $episodeCount,
         ]);
         /**
@@ -156,8 +162,14 @@ class EpisodeController extends Controller
                 'Message' => 'Podcast not found.'
             ], 404);
         }
-        
-        $episode = Episode::where('episode_number', $episodeNumber)->first();
+        /**
+         * Initialize var to store episode.
+         * @var Episode $episode
+         */
+        $episode = Episode::where([
+            'podcasts_id'    => $podcast['id'],
+            'episode_number' => $episodeNumber,
+        ])->first();
         
         if($episode === NULL)
         {
@@ -165,6 +177,10 @@ class EpisodeController extends Controller
                 'Message' => 'Episode not found.'
             ], 400);
         }
+        /**
+         * Initialize var to store file object from disk.
+         * @var Storage $file
+         */
         $file = Storage::disk('spaces')->files($episode['download_path']);
         
         if(empty($file))
@@ -178,5 +194,85 @@ class EpisodeController extends Controller
         }
         
         return Storage::disk('spaces')->download($file[0]);
+    }
+    
+    /**
+     * Update a podcast episode.
+     * 
+     * @param   string                     $podcastSlug
+     * @param   integer                    $episodeNumber
+     * @param   \Illuminate\Http\Request
+     * @return  \Illuminate\Http\Response
+     */
+    public function update($podcastSlug, $episodeNumber, Request $request)
+    {
+        $podcast = Podcast::where('slug', $podcastSlug)->first();
+        
+        if(!$this->podcast->doesPodcastExistDb($podcastSlug) || !$this->podcast->doesPodcastExistDisk($podcast['download_path']))
+        {
+            return response()->json([
+                'Message' => 'Podcast not found.'
+            ], 404);
+        }
+        /**
+         * Initialize var to store episode.
+         * @var Episode $episode
+         */
+        $episode = Episode::where([
+            'podcasts_id'    => $podcast['id'],
+            'episode_number' => $episodeNumber,
+        ])->first();
+        
+        if($episode === NULL)
+        {
+            return response()->json([
+                'Message' => 'Episode not found.'
+            ], 400);
+        }
+        /**
+         * Initialize var to hold request data.
+         * @var array $data
+         */
+        $data = array
+        ( 
+            'episode' => $request->file('episode'),
+            'title'       => filter_var($request->input('title'), FILTER_SANITIZE_STRING),
+            'description' => filter_var($request->input('description'), FILTER_SANITIZE_STRING),
+        );
+        /**
+         * Initialize var to store request errors.
+         * @var array $errors
+         */
+        $errors = Episode::getPatchErrors($data);
+        
+        if(!empty($errors))
+        {
+            /**
+             * Return JSON response list of errors to client.
+             */
+            return response()->json([
+                'Message' => 'Invalid input data.',
+                'Errors'  => $errors,
+            ], 400);
+        }
+        
+        $episode->updateEpisode($data);
+        
+        return response()->json([
+            'Message' => 'Successful',
+        ]);
+    }
+    
+    public function delete($podcastSlug, $episodeNumber)
+    {
+        $podcast = Podcast::where('slug', $podcastSlug)->first();
+        
+        if(!$this->podcast->doesPodcastExistDb($podcastSlug) || !$this->podcast->doesPodcastExistDisk($podcast['download_path']))
+        {
+            return response()->json([
+                'Message' => 'Podcast not found.'
+            ], 404);
+        }
+        
     }
 }

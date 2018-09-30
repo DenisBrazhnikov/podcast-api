@@ -21,8 +21,15 @@ class EpisodeRepository implements EpisodeInterface
         return $this->episode->allEpisodes($podcastId);
     }
     
+    // Get podcast episodes
     public function getPodcastEpisodes($podcastId)
     {
         return $this->episode->getPodcastEpisodes($podcastId);
+    }
+    
+    // Update an instance of a podcast episode
+    public function updateEpisode($data)
+    {
+        return $this->episode->updateEpisode($data);
     }
 }

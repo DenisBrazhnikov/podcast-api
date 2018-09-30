@@ -87,24 +87,22 @@ class Podcast extends Model
     /**
      * Get errors of post request for this resource.
      * 
-     * @param   \Illuminate\Http\Request  $request
+     * @param   array  $data
      * @return  array
      */
-    public static function getPostErrors($request)
+    public static function getPostErrors($data)
     {
         $errors = array();
         
-        $name = $request->input('name');
-        
-        if($name === NULL)
+        if($data['name'] === NULL)
         {
             array_push($errors, 'Name not provided.');            
         }
-        elseif(strlen($name) < 3)
+        elseif(strlen($data['name']) < 3)
         {
             array_push($errors, 'Name is less than 3 characters.');
         }
-        elseif(strlen($name) > 191)
+        elseif(strlen($data['name']) > 191)
         {
             array_push($errors, 'Name exceeds 191 characters.');
         }
