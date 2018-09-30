@@ -28,6 +28,7 @@ Route::delete('/podcasts/{podcastSlug}/delete', 'PodcastController@delete')->nam
  */
 Route::get('/podcasts/{podcastSlug}/episodes', 'EpisodeController@index')->name('episode');
 Route::post('/podcasts/{podcastSlug}/episodes/new', 'EpisodeController@create')->name('episodeCreate');
-Route::get('/podcasts/{podcastSlug}/episodes/{episodeSlug}', 'EpisodeController@show')->name('episodeShow');
-Route::delete('/podcasts/{podcastSlug}/episodes/{episodeSlug}/delete', 'EpisodeController@delete')->name('episodeDelete');
+Route::get('/podcasts/{podcastSlug}/episodes/{episodeNumber}', 'EpisodeController@show')->name('episodeShow');
+Route::patch('/podcasts/{podcastSlug}/episodes/{episodeNumber}/update', 'EpisodeController@update')->name('episodeUpdate');
+Route::delete('/podcasts/{podcastSlug}/episodes/{episodeNumber}/delete', 'EpisodeController@delete')->name('episodeDelete');
 

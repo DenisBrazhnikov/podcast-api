@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Repositories\EpisodeRepository;
 use App\Repositories\PodcastRepository;
+use Illuminate\Support\Facades\Storage;
 use Illuminate\Http\Request;
 use App\Episode;
 use App\Podcast;
@@ -66,7 +67,7 @@ class EpisodeController extends Controller
          * 
          * @var \Illuminate\Http\Request $episode
          */
-        $episode = $request->file('episode');
+        $episodeFile = $request->file('episode');
         /**
          * Initialize var to hold errors for this request.
          * 
@@ -89,7 +90,7 @@ class EpisodeController extends Controller
          * 
          * @var string $podcastName
          */
-        $podcastName = $episode->getClientOriginalName();
+        $podcastName = $episodeFile->getClientOriginalName();
         /**
          * Remove extension from filename.
          */
@@ -109,7 +110,7 @@ class EpisodeController extends Controller
          * 
          * @var string $path
          */
-        $path = "podcasts/$slug/episodes/".++$episodeCount;
+        $path = sprintf("podcasts/%s/episodes/%d", $podcastSlug, ++$episodeCount);
         /**
          * Initialize disk variable.
          * 
@@ -119,7 +120,7 @@ class EpisodeController extends Controller
         /**
          * Store file on disk.
          */
-        $request->file('episode')->store($path, $disk);
+        $episodeFile->store($path, $disk);
         /**
          * Store episode data in database.
          */
@@ -136,5 +137,46 @@ class EpisodeController extends Controller
         return response()->json([
            'Message' => 'Successful' 
         ]);
+    }
+    
+    /**
+     * Download a podcast episode.
+     * 
+     * @param   string   $podcastSlug
+     * @param   integer  $episodeNumber
+     * @return  \Illuminate\Http\Response
+     */
+    public function show($podcastSlug, $episodeNumber)
+    {
+        $podcast = Podcast::where('slug', $podcastSlug)->first();
+        
+        if(!$this->podcast->doesPodcastExistDb($podcastSlug) || !$this->podcast->doesPodcastExistDisk($podcast['download_path']))
+        {
+            return response()->json([
+                'Message' => 'Podcast not found.'
+            ], 404);
+        }
+        
+        $episode = Episode::where('episode_number', $episodeNumber)->first();
+        
+        if($episode === NULL)
+        {
+            return response()->json([
+                'Message' => 'Episode not found.'
+            ], 400);
+        }
+        $file = Storage::disk('spaces')->files($episode['download_path']);
+        
+        if(empty($file))
+        {
+            return response()->json([
+                'Message' => 'Unsuccessful',
+                'Errors'  => [
+                    'Unable to retrieve file from storage.'
+                ]
+            ]); 
+        }
+        
+        return Storage::disk('spaces')->download($file[0]);
     }
 }
