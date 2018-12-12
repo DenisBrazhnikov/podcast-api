@@ -31,7 +31,7 @@ class PodcastController extends Controller
     public function index()
     {
         $podcasts = $this->podcast->allPodcasts();
-        
+
         for($i=0; $i < sizeof($podcasts); $i++)
         {
             $podcasts[$i] = array_merge($podcasts[$i], [
